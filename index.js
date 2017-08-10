@@ -5,13 +5,22 @@
 
     const VERSION = "0.0.2";
     const PORT = 3000;
-    const BASE_PATH = 'tokens/';
+    const BASE_FOLDER = 'tokens';
 
     const fs = require('fs');
     const request = require('request');
     const express = require('express');
     const bodyParser = require('body-parser');
     const app = express();
+
+    console.log(`[START] Creating the directory: ${BASE_FOLDER}`);
+    fs.mkdir(`${BASE_FOLDER}`, (err) => {
+        if (err) {
+            console.log(`[ERROR] Failed to create the directory: ${BASE_FOLDER}`);
+            console.log(err);
+        }
+        console.log(`[DONE]`);
+    });
 
     app.use(bodyParser.json()); // support json encoded bodies
     app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
@@ -54,11 +63,22 @@
             // 2. Check if token (via token name) exist
             // 3. Save file to JSON
 
-            console.log(`[START] Downloading: ${tokenFileName}.png`);
-            DOWNLOAD(imageUrl, `${tokenFileName}.png`, () => {
-                console.log(`[DONE] Downloaded: ${tokenFileName}.png`);
-                res.send('DONE');
+            console.log(`[START] Creating the directory: ${BASE_FOLDER}/${tokenPack}`);
+            fs.mkdir(`${BASE_FOLDER}/${tokenPack}`, (err) => {
+                if (err) {
+                    console.log(`[ERROR] Failed to creatie the directory: ${BASE_FOLDER}/${tokenPack}`);
+                    console.log(err);
+                }
+                console.log(`[DONE]`);
+
+                console.log(`[START] Downloading: ${tokenFileName}.png`);
+                DOWNLOAD(imageUrl, `${BASE_FOLDER}/${tokenPack}/${tokenFileName}.png`, () => {
+                    console.log(`[DONE] Downloaded: ${tokenFileName}.png`);
+
+                    res.send('DONE');
+                });
             });
+
         }
     });
 
