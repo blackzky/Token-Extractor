@@ -1,8 +1,8 @@
 /* jshint esversion: 6 */
 
-const VERSION = 'v0.1.1';
+const VERSION = 'v1.0.0';
 const SERVER_URL = 'http://localhost:3000/extract';
-const DOWNLOAD_DELAY = 1000;
+const DOWNLOAD_DELAY = 150;
 
 const DOWNLOAD_ALL_UI = `
 <div style='position: fixed; top: 1em; left: 1em;'>

@@ -3,7 +3,7 @@
 (() => {
     'use strict';
 
-    const VERSION = "0.2.0";
+    const VERSION = "v1.0.0";
     const PORT = 3000;
     const BASE_FOLDER = 'tokens';
 
@@ -70,14 +70,24 @@
 
                     extractToken(res, tokenName, tokenFileName, tokenPack, tokenTags, imageUrl);
 
-                    // TODO: Find exsiting first. Consider duplicates
-                    TOKEN_PACKS.insert({ name: tokenPack }); // DB Operation
+                    let foundTokenPacks = TOKEN_PACKS.find({ 'name': tokenPack }); // DB Operation
+                    if (foundTokenPacks.length < 1) { // Folder does not exist yet
+                        TOKEN_PACKS.insert({ name: tokenPack }); // DB Operation
+                    }
                 });
             }
         }
     }
 
     function extractToken(res, tokenName, tokenFileName, tokenPack, tokenTags, imageUrl) {
+        let foundToken = TOKENS.find({ 'tokenName': tokenName, 'tokenFileName': tokenFileName }); // DB Operation
+
+        if (foundToken.length > 0) {
+            let random_string = RANDOM_STRING();
+            tokenName = `${tokenName}_${random_string}`;
+            tokenFileName = `${tokenFileName}_${random_string}`;
+        }
+
         let token = {
             tokenName: tokenName,
             tokenFileName: tokenFileName,
@@ -85,8 +95,6 @@
             tokenTags: tokenTags,
             imageUrl: imageUrl
         };
-
-        // TODO: Find exsiting first. Consider duplicates
 
         console.log(`[START] Downloading: ${tokenFileName}.png`);
         DOWNLOAD(imageUrl, `${BASE_FOLDER}/${tokenPack}/${tokenFileName}.png`, () => {
@@ -158,6 +166,10 @@
 
         // Pass to next layer of middleware
         next();
+    }
+
+    function RANDOM_STRING() {
+        return Math.random().toString(36).substring(2);
     }
 
 })();
