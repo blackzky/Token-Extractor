@@ -1,5 +1,6 @@
 /* jshint esversion: 6 */
 
+const VERSION = 'v0.0.1';
 const EXTRACTOR_UI = `
 <div>
     <a href="#" class="download">Download</a>
@@ -16,8 +17,10 @@ $(() => {
     if (AddScript()) {
         LoadUI();
         $('body').on('click', '.download', DownloadToken);
+
+        console.log(`Token Extractor added: version: ${VERSION}`);
     } else {
-        alert('Failed to load extractor');
+        console.error('Failed to load extractor');
     }
 
     //////////////////////////////
