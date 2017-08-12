@@ -5,13 +5,19 @@
 
     const VERSION = "v1.0.0";
     const PORT = 3000;
+    const HTTPS_PORT = 443;
     const BASE_FOLDER = 'tokens';
+
 
     const fs = require('fs');
     const request = require('request');
     const express = require('express');
     const bodyParser = require('body-parser');
     const loki = require('lokijs');
+    const https = require('https');
+    const privateKey = fs.readFileSync('sslcert/privatekey.key', 'utf8');
+    const certificate = fs.readFileSync('sslcert/certificate.crt', 'utf8');
+    var credentials = { key: privateKey, cert: certificate };
     const app = express();
 
     const DB_NAME = 'tokens.db';
@@ -30,9 +36,8 @@
 
     app.post('/extract', handleExtractRoute);
 
-    app.listen(PORT, () => {
-        console.log(`Token Extractor (v${VERSION}) running on port ${PORT}!`);
-    });
+    https.createServer(app).listen(PORT);
+    https.createServer(credentials, app).listen(HTTPS_PORT);
 
     function DOWNLOAD(uri, filename, callback) {
         request.head(uri, function(err, res, body) {
@@ -152,7 +157,7 @@
 
     function setCORS(req, res, next) {
         // Website you wish to allow to connect
-        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
+        res.setHeader('Access-Control-Allow-Origin', 'https://marketplace.roll20.net');
 
         // Request methods you wish to allow
         res.setHeader('Access-Control-Allow-Methods', 'GET POST');

@@ -1,7 +1,7 @@
 /* jshint esversion: 6 */
 
-const VERSION = 'v1.0.0';
-const SERVER_URL = 'http://localhost:3000/extract';
+const VERSION = 'v1.0.1';
+const SERVER_URL = 'https://localhost/extract';
 const DOWNLOAD_DELAY = 150;
 
 const DOWNLOAD_ALL_UI = `
