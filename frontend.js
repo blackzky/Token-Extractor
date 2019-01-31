@@ -50,7 +50,7 @@ $(() => {
         e.preventDefault();
 
         let parentDOM = $(e.currentTarget).parent().parent();
-        let tokenPack = $("h1.setname").text().trim();
+        let tokenPack = $("div.titlecard h2").text().trim();
         let tokenName = parentDOM.find('div.desc em').text().trim();
         let imageUrl = parentDOM.find("div.inneritem a.lightly")[0].href;
         let tokenTags = parentDOM.attr('original-title');
@@ -94,7 +94,7 @@ $(() => {
 
 /*
 [TOKEN]
-	$("h1.setname").text().trim();
+	$("div.titlecard h2").text().trim();
 		=> ex. "Devin Token Pack 45 - Heroic Characters 1"
 
 [TOKEN NAME]
