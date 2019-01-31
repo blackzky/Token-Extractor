@@ -1,8 +1,8 @@
 /* jshint esversion: 6 */
 
-const VERSION = 'v1.0.1';
+const VERSION = 'v1.0.2';
 const SERVER_URL = 'https://localhost/extract';
-const DOWNLOAD_DELAY = 150;
+const DOWNLOAD_DELAY = 250;
 
 const DOWNLOAD_ALL_UI = `
 <div style='position: fixed; top: 1em; left: 1em;'>
@@ -28,7 +28,7 @@ $(() => {
         $('body').on('click', 'a.download', DownloadToken);
         $('body').on('click', 'button#downloadAll', DownloadAllTokenTokens);
 
-        console.debug(`Token Extractor added: version: ${VERSION}`);
+        console.log(`Token Extractor added: version: ${VERSION}`);
     } else {
         console.error('Failed to load extractor');
     }
@@ -62,7 +62,7 @@ $(() => {
             'tokenTags': tokenTags
         };
 
-        console.debug(`[START] Downloading token: ${tokenName}`);
+        console.log(`[START] Downloading token: ${tokenName}`);
         parentDOM.find('span.downloadStatus').text('Downloading...');
         parentDOM.find('a.download').hide();
 
@@ -70,23 +70,23 @@ $(() => {
             parentDOM.find('span.downloadStatus').text('Downloaded');
             parentDOM.find('span.downloadStatus').css('color', 'green');
 
-            console.debug(`[DONE] Downloaded token: ${tokenName}`);
+            console.log(`[DONE] Downloaded token: ${tokenName}`);
         }).fail((err) => {
             parentDOM.find('span.downloadStatus').text('Failed');
             parentDOM.find('span.downloadStatus').css('color', 'red');
 
-            console.debug(`[DONE] Failed to donwload token: ${tokenName}`);
+            console.log(`[DONE] Failed to donwload token: ${tokenName}`);
         });
     }
 
     function DownloadAllTokenTokens(e) {
         e.preventDefault();
-        console.debug('[START] Downloading all tokens of this page.');
+        console.log('[START] Downloading all tokens of this page.');
 
         ASSETS_DOM.each((i, e) => {
             setTimeout(() => {
                 $(e).find('div a.download').click();
-            }, DOWNLOAD_DELAY);
+            }, i * DOWNLOAD_DELAY);
         });
     }
 

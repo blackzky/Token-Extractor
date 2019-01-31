@@ -3,7 +3,7 @@
 (() => {
     'use strict';
 
-    const VERSION = "v1.0.0";
+    const VERSION = "v1.0.1";
     const PORT = 3000;
     const HTTPS_PORT = 443;
     const BASE_FOLDER = 'tokens';
@@ -17,7 +17,10 @@
     const https = require('https');
     const privateKey = fs.readFileSync('sslcert/privatekey.key', 'utf8');
     const certificate = fs.readFileSync('sslcert/certificate.crt', 'utf8');
-    var credentials = { key: privateKey, cert: certificate };
+    var credentials = {
+        key: privateKey,
+        cert: certificate
+    };
     const app = express();
 
     const DB_NAME = 'tokens.db';
@@ -31,7 +34,9 @@
     initialize();
 
     app.use(bodyParser.json()); // support json encoded bodies
-    app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+    app.use(bodyParser.urlencoded({
+        extended: true
+    })); // support encoded bodies
     app.use(setCORS);
 
     app.post('/extract', handleExtractRoute);
@@ -40,7 +45,7 @@
     https.createServer(credentials, app).listen(HTTPS_PORT);
 
     function DOWNLOAD(uri, filename, callback) {
-        request.head(uri, function(err, res, body) {
+        request.head(uri, function (err, res, body) {
             request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
         });
     }
@@ -60,7 +65,9 @@
             res.send('Error: No imageUri provided');
         } else {
             let tokenName = tokenFileName.replace(/_/g, ' ');
-            let foundTokenPacks = TOKEN_PACKS.find({ 'name': tokenPack }); // DB Operation
+            let foundTokenPacks = TOKEN_PACKS.find({
+                'name': tokenPack
+            }); // DB Operation
 
             if (foundTokenPacks.length > 0) { // Folder already exist
                 extractToken(res, tokenName, tokenFileName, tokenPack, tokenTags, imageUrl);
@@ -75,9 +82,13 @@
 
                     extractToken(res, tokenName, tokenFileName, tokenPack, tokenTags, imageUrl);
 
-                    let foundTokenPacks = TOKEN_PACKS.find({ 'name': tokenPack }); // DB Operation
+                    let foundTokenPacks = TOKEN_PACKS.find({
+                        'name': tokenPack
+                    }); // DB Operation
                     if (foundTokenPacks.length < 1) { // Folder does not exist yet
-                        TOKEN_PACKS.insert({ name: tokenPack }); // DB Operation
+                        TOKEN_PACKS.insert({
+                            name: tokenPack
+                        }); // DB Operation
                     }
                 });
             }
@@ -85,13 +96,9 @@
     }
 
     function extractToken(res, tokenName, tokenFileName, tokenPack, tokenTags, imageUrl) {
-        let foundToken = TOKENS.find({ 'tokenName': tokenName, 'tokenFileName': tokenFileName }); // DB Operation
-
-        if (foundToken.length > 0) {
-            let random_string = RANDOM_STRING();
-            tokenName = `${tokenName}_${random_string}`;
-            tokenFileName = `${tokenFileName}_${random_string}`;
-        }
+        let random_string = RANDOM_STRING();
+        tokenName = `${tokenName}_${random_string}`;
+        tokenFileName = `${tokenFileName}_${random_string}`;
 
         let token = {
             tokenName: tokenName,
@@ -105,7 +112,6 @@
         DOWNLOAD(imageUrl, `${BASE_FOLDER}/${tokenPack}/${tokenFileName}.png`, () => {
             TOKENS.insert(token); // DB Operation
 
-            // console.log(TOKENS.find({ 'tokenName': tokenName })); // FOR DEBUG ONLY
             console.log(`[DONE] Downloaded: ${tokenFileName}.png`);
             res.send('DONE');
         });
@@ -137,12 +143,16 @@
     function databaseInitialize() {
         TOKENS = DB.getCollection(TOKEN_COLLECTION_NAME);
         if (TOKENS === null) {
-            TOKENS = DB.addCollection(TOKEN_COLLECTION_NAME, { 'unique': ["tokenFileName"] });
+            TOKENS = DB.addCollection(TOKEN_COLLECTION_NAME, {
+                'unique': ["tokenFileName"]
+            });
         }
 
         TOKEN_PACKS = DB.getCollection(TOKEN_PACK_COLLECTION_NAME);
         if (TOKEN_PACKS === null) {
-            TOKEN_PACKS = DB.addCollection(TOKEN_PACK_COLLECTION_NAME, { 'unique': ["name"] });
+            TOKEN_PACKS = DB.addCollection(TOKEN_PACK_COLLECTION_NAME, {
+                'unique': ["name"]
+            });
         }
 
         // kick off any program logic or start listening to external events
