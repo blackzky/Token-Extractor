@@ -65,6 +65,7 @@
             res.send('Error: No imageUri provided');
         } else {
             let tokenName = tokenFileName.replace(/_/g, ' ');
+            tokenPack = tokenPack.replace(/[/\\?%*:|"<>]/g, '-');
             let foundTokenPacks = TOKEN_PACKS.find({
                 'name': tokenPack
             }); // DB Operation
